@@ -1,4 +1,4 @@
-import { Flex, Text, Input, Button, Heading, useToast } from "@chakra-ui/react"
+import { Flex, Text, Input, Button, Heading } from "@chakra-ui/react"
 import { useState } from "react"
 import { contractAddress, abi } from "@/constants"
 
@@ -6,10 +6,9 @@ import { parseEther } from "viem"
 
 import { prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core'
 
-const Contribute = ({ getDatas }) => {
+const Refund = ({ getDatas }) => {
 
     const [amount, setAmount] = useState<string>('')
-    const toast = useToast()
 
     const contribute = async() => {
         try {
@@ -19,42 +18,25 @@ const Contribute = ({ getDatas }) => {
             const { request } = await prepareWriteContract({
                 address: contractAddress,
                 abi: abi,
-                functionName: 'contribute',
-                value: money
+                functionName: 'refund'
             })
             console.log(request)
             const { hash } = await writeContract(request)
-            const data = await waitForTransaction({
-                hash: hash,
-            })
             console.log(hash)
             console.log('okkkk3')
             await getDatas()
-            toast({
-                title: 'Congratulations',
-                description: "Your contribution has been added.",
-                status: 'success',
-                duration: 4000,
-                isClosable: true,
-            })
         }
         catch(e) {
-            toast({
-                title: 'Error',
-                description: "An error occured",
-                status: 'error',
-                duration: 4000,
-                isClosable: true,
-            })
+            console.log(e)
         }
     }
 
     return (
         <>
-            <Heading mt='2rem'>Contribute</Heading>
+            <Heading mt='2rem'>Refund</Heading>
             <Flex mt="1rem">
                 <Input 
-                    placeholder='Your amount in ETH' 
+                    placeholder='Amount in ETH' 
                     size='lg'
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}  />
@@ -70,4 +52,4 @@ const Contribute = ({ getDatas }) => {
     )
 }
 
-export default Contribute
+export default Refund
