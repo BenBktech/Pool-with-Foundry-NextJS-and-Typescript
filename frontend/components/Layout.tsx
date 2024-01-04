@@ -1,7 +1,13 @@
+'use client'
+
+// Components
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+
+// ChakraUI
 import { Flex } from "@chakra-ui/layout";
 
+// Types
 import { LayoutChildrenProps } from "@/types";
 
 export const Layout = ({ children }: LayoutChildrenProps) => {

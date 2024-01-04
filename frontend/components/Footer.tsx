@@ -1,3 +1,6 @@
+'use client'
+
+// ChakraUI
 import { Flex, Text } from "@chakra-ui/layout";
 
 export const Footer = () => {

@@ -1,33 +1,53 @@
-import { Flex, Text, Input, Button, Heading } from "@chakra-ui/react"
-import { useState } from "react"
-import { contractAddress, abi } from "@/constants"
+'use client'
 
+// ChakraUI
+import { Flex, Text, Input, Button, Heading, useToast } from "@chakra-ui/react"
+
+// ReactJS
+import { useState } from "react"
+
+// Constants and Types
+import { contractAddress, abi } from "@/constants"
+import { RefundProps } from "@/types"
+
+// Viem
 import { parseEther } from "viem"
 
+// Wagmi
 import { prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core'
 
-const Refund = ({ getDatas }) => {
+const Refund = ({ getDatas, end, goal, totalCollected }: RefundProps) => {
 
-    const [amount, setAmount] = useState<string>('')
+    const toast = useToast()
 
-    const contribute = async() => {
+    const refund = async() => {
         try {
-            console.log('okkkk');
-            let money = parseEther(amount);
-            console.log(money)
             const { request } = await prepareWriteContract({
                 address: contractAddress,
                 abi: abi,
                 functionName: 'refund'
             })
-            console.log(request)
             const { hash } = await writeContract(request)
-            console.log(hash)
-            console.log('okkkk3')
+            const data = await waitForTransaction({
+                hash: hash,
+            })
             await getDatas()
+            toast({
+                title: 'Congratulations',
+                description: "You have been refunded.",
+                status: 'success',
+                duration: 4000,
+                isClosable: true,
+            })
         }
         catch(e) {
-            console.log(e)
+            toast({
+                title: 'Error',
+                description: "An error occured",
+                status: 'error',
+                duration: 4000,
+                isClosable: true,
+            })
         }
     }
 
@@ -35,18 +55,18 @@ const Refund = ({ getDatas }) => {
         <>
             <Heading mt='2rem'>Refund</Heading>
             <Flex mt="1rem">
-                <Input 
-                    placeholder='Amount in ETH' 
-                    size='lg'
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}  />
-                <Button 
-                    colorScheme='purple' 
-                    size='lg'
-                    onClick={() => contribute()}
-                >
-                    Contribute
-                </Button>
+                {totalCollected < goal && Math.floor(Date.now() / 1000) > parseInt(end) ? (
+                    <Button 
+                        colorScheme='red' 
+                        size='lg'
+                        width="100%"
+                        onClick={() => refund()}
+                    >
+                        Refund
+                    </Button>
+                ) : (
+                    <Text color='red'>No refund available right now.</Text>
+                )}
             </Flex>
         </>
     )

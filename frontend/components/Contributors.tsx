@@ -1,32 +1,30 @@
+'use client'
+
+// ChakraUI
 import { Flex, Heading, Card, CardBody, Text } from "@chakra-ui/react"
 
+// Viem
 import { formatEther, parseEther } from "viem"
 
-const Contributors = ({ events }) => {
-    console.log(events)
+// Types
+import { ContributorsProps } from "@/types"
+
+const Contributors = ({ events }: ContributorsProps) => {    
     return (
         <>
             <Heading mt='2rem'>Contributors</Heading>
             <Flex mt="1rem" direction="column">
                 {events.map((event) => {
                     return (
-                        <Card mb=".5rem">
+                        <Card mb=".5rem" key={crypto.randomUUID()}>
                             <CardBody>
                                 <Flex
                                     justifyContent="space-between"
                                     alignItems="center"
                                 >
                                     <Text>{event.contributor.substring(0, 5)}...{event.contributor.substring(event.contributor.length - 5)}</Text>
-                                    <Text
-                                        color={
-                                            event.amount > parseEther('2') ? (
-                                                'green'
-                                            ) : (
-                                                'orange'
-                                            )
-                                        }
-                                    >
-                                        {formatEther(event.amount)} ETH
+                                    <Text>
+                                        {formatEther(BigInt(event.amount))} ETH
                                     </Text>
                                 </Flex>
                             </CardBody>

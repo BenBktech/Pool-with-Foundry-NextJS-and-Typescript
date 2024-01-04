@@ -1,4 +1,9 @@
+'use client'
+
+// RainbowKit
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+
+// ChakraUI
 import { Flex, Text } from '@chakra-ui/layout';
 
 export const Header = () => {

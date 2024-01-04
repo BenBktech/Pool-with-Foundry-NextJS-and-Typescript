@@ -1,16 +1,22 @@
 'use client'
-import { useState } from 'react'
 
+// Constants and Types
+import { ProgressionProps } from '@/types'
+import { contractAddress, abi } from '@/constants'
+
+// ReactJS
+import { useState, useEffect } from 'react'
+
+// Wagmi
 import { useAccount } from 'wagmi'
 
-import { contractAddress, abi } from '@/constants'
-import { useEffect } from 'react'
-
+// ChakraUI
 import { Text, Progress, Heading, Spinner } from '@chakra-ui/react'
 
+// Viem
 import { formatEther } from 'viem'
 
-const Progression = ({ isLoading, end, goal, totalCollected }) => {
+const Progression = ({ isLoading, end, goal, totalCollected }: ProgressionProps) => {
 
     const { address, isConnected } = useAccount()    
 
@@ -24,13 +30,13 @@ const Progression = ({ isLoading, end, goal, totalCollected }) => {
                 <Heading mb="1rem">Progression</Heading>
                 <Text mb=".5rem"><Text as='span' fontWeight="bold">End date :</Text> {end}</Text>
                 <Progress 
-                    colorScheme={(totalCollected / goal) * 100 < 100 ? 'red' : 'green'} 
+                    colorScheme={(parseInt(totalCollected) / parseInt(goal)) * 100 < 100 ? 'red' : 'green'} 
                     height='32px' 
-                    value={(totalCollected / goal) * 100} 
+                    value={(parseInt(totalCollected) / parseInt(goal)) * 100} 
                     hasStripe 
                 />
                 <Text mt='.5rem'>
-                    {parseFloat(formatEther(totalCollected)).toFixed(2)} ETH /{parseFloat(formatEther(goal)).toFixed(2)} ETH | <Text as='span' fontWeight='bold'>{((parseFloat(totalCollected) / parseFloat(goal)) * 100).toFixed(2)}%</Text>
+                    {Number(formatEther(BigInt(totalCollected))).toFixed(2)} ETH /{Number(formatEther(BigInt(goal))).toFixed(2)} ETH | <Text as='span' fontWeight='bold'>{((parseFloat(totalCollected) / parseFloat(goal)) * 100).toFixed(2)}%</Text>
                 </Text>
             </>
         )}

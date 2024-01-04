@@ -1,34 +1,40 @@
-import { Flex, Text, Input, Button, Heading, useToast } from "@chakra-ui/react"
-import { useState } from "react"
-import { contractAddress, abi } from "@/constants"
+'use client'
 
+// ChakraUI
+import { Flex, Text, Input, Button, Heading, useToast } from "@chakra-ui/react"
+
+// React
+import { useState } from "react"
+
+// Constants and Types
+import { contractAddress, abi } from "@/constants"
+import { ContributeProps } from "@/types"
+
+// Viem
 import { parseEther } from "viem"
 
+// Wagmi
 import { prepareWriteContract, writeContract, waitForTransaction } from '@wagmi/core'
 
-const Contribute = ({ getDatas }) => {
+const Contribute = ({ getDatas }: ContributeProps) => {
 
-    const [amount, setAmount] = useState<string>('')
     const toast = useToast()
+    
+    const [amount, setAmount] = useState<string>('')
 
     const contribute = async() => {
         try {
-            console.log('okkkk');
             let money = parseEther(amount);
-            console.log(money)
             const { request } = await prepareWriteContract({
                 address: contractAddress,
                 abi: abi,
                 functionName: 'contribute',
                 value: money
             })
-            console.log(request)
             const { hash } = await writeContract(request)
             const data = await waitForTransaction({
                 hash: hash,
             })
-            console.log(hash)
-            console.log('okkkk3')
             await getDatas()
             toast({
                 title: 'Congratulations',
