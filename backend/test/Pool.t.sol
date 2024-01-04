@@ -42,7 +42,16 @@ contract PoolTest is Test {
         pool.contribute{value: 1 ether}();
     }
 
+    function test_RevertWhen_NotEnoughFunds() public {
+        bytes4 selector = bytes4(keccak256("NotEnoughFunds()"));
+        vm.expectRevert(abi.encodeWithSelector(selector));
+
+        vm.prank(addr1);
+        pool.contribute();
+    }
+
     function test_ExpectEmit_SuccessfullContribute(uint96 _amount) public {
+        vm.assume(_amount > 0);
         vm.expectEmit(true, false, false, true);
         emit Pool.Contribute(address(addr1), _amount);
 

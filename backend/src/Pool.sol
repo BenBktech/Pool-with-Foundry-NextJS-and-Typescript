@@ -8,6 +8,7 @@ error GoalAlreadyReached();
 error CollectNotFinished();
 error FailedToSendEther();
 error NoContribution();
+error NotEnoughFunds();
 
 contract Pool is Ownable {
     uint256 public end;
@@ -26,6 +27,9 @@ contract Pool is Ownable {
     function contribute() public payable {
         if(block.timestamp >= end) {
             revert CollectIsFinished();
+        }
+        if(msg.value == 0) {
+            revert NotEnoughFunds();
         }
         
         contributions[msg.sender] += msg.value;
@@ -58,6 +62,7 @@ contract Pool is Ownable {
         
         uint256 amount = contributions[msg.sender];
         contributions[msg.sender] = 0;
+        totalCollected -= amount;
         (bool sent,) = msg.sender.call{value: amount}("");
         if(!sent) {
             revert FailedToSendEther();
